@@ -42,8 +42,9 @@ class Player(pygame.sprite.Sprite):
         self.isShooting = False
         self.walkCount = 0
         self.runCount = 0
+        self.jumpCount = 0
         self.facing = 'right'
-        self.surf = pygame.image.load(self.walkingRight[self.walkCount]).convert()
+        self.surf = pygame.image.load(self.walkingRight[self.walkCount])
         self.surf.set_colorkey((0,0,0), RLEACCEL)
         self.rect = self.surf.get_rect()
         self.rect.x = 0
@@ -56,7 +57,7 @@ class Player(pygame.sprite.Sprite):
             self.walking = True
             if self.walkCount >= len(self.walkingLeft)-1:
                 self.walkCount = 0
-            self.surf = pygame.image.load(self.walkingLeft[self.walkCount]).convert()
+            self.surf = pygame.image.load(self.walkingLeft[self.walkCount])
             self.surf.set_colorkey((0,0,0), RLEACCEL)
             self.rect.x -= 1
             self.walkCount += 1
@@ -66,7 +67,7 @@ class Player(pygame.sprite.Sprite):
             self.walking = True
             if self.walkCount >= len(self.walkingRight)-1:
                 self.walkCount = 0
-            self.surf = pygame.image.load(self.walkingLeft[self.walkCount]).convert()
+            self.surf = pygame.image.load(self.walkingRight[self.walkCount])
             self.surf.set_colorkey((0, 0, 0), RLEACCEL)
             self.rect.x += 1
             self.walkCount += 1
@@ -80,28 +81,89 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
 
-class enemy(pygame.sprite.Sprite):
+class slime(pygame.sprite.Sprite):
     animationCount = 0
     isWalking = 0
     isAttacking = 0
     def __init__(self):
-        super(enemy, self).__init__()
-        self.surf = pygame.image.load('assets/enemies/slime/slime.png').convert()
+        super(slime, self).__init__()
+        self.surf = pygame.image.load('assets/enemies/slime/slime.png')
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
-        self.rect = self.surf.get_rect(center=(random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),700))
+        self.rect = self.surf.get_rect(center=(random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100), 600))
         self.speed = random.randint(2, 5)
+        self.type = 'low-tier'
+        self.collide = False
+
 
     def update(self):
-        walkAnimation = ['assets/enemies/slime/slime.png']
-
-        if self.animationCount > len(walkAnimation) - 1:
-            self.animationCount = 0
-        self.surf = pygame.image.load(walkAnimation[self.animationCount]).convert()
+        movement = ['assets/enemies/slime/slime.png']
+        rChoice = random.randint(1, 1000) % 100
+        if rChoice == 0:
+            self.surf = pygame.image.load(movement[self.animationCount])
+            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+            self.animationCount += 1
+            if self.animationCount > len(movement) - 1:
+                self.animationCount = 0
+        self.surf = pygame.image.load(movement[self.animationCount])
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
-        self. animationCount -= 1
-        self.rect.move_ip(-1, 0)
+        self.rect.move_ip(self.speed * -1, 0)
         if self.rect.right < 0:
             self.kill()
+
+class mushroom(pygame.sprite.Sprite):
+    animationCount = 0
+    isWalking = 0
+    isAttacking = 0
+    def __init__(self):
+        super(mushroom, self).__init__()
+        self.surf = pygame.image.load('assets/enemies/mushroom/mushroom.png')
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+        self.rect = self.surf.get_rect(center=(random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100), 600))
+        self.speed = random.randint(2, 5)
+        self.type = 'mid-tier'
+
+    def update(self):
+        movement = ['assets/enemies/mushroom/mushroom.png']
+        rChoice = random.randint(1, 1000) % 100
+        if rChoice == 0:
+            self.surf = pygame.image.load(movement[self.animationCount])
+            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+            self.animationCount += 1
+            if self.animationCount > len(movement) - 1:
+                self.animationCount = 0
+        self.surf = pygame.image.load(movement[self.animationCount])
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+        self.rect.move_ip(self.speed * -1, 0)
+        if self.rect.right < 0:
+            self.kill()
+
+class potato(pygame.sprite.Sprite):
+    animationCount = 0
+    isWalking = 0
+    isAttacking = 0
+    def __init__(self):
+        super(potato, self).__init__()
+        self.surf = pygame.image.load('assets/enemies/potato/potato.png')
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+        self.rect = self.surf.get_rect(center=(random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100), 600))
+        self.speed = random.randint(2, 5)
+        self.type = 'high-tier'
+
+    def update(self):
+        movement = ['assets/enemies/potato/potato.png']
+        rChoice = random.randint(1, 1000) % 100
+        if rChoice == 0:
+            self.surf = pygame.image.load(movement[self.animationCount])
+            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+            self.animationCount += 1
+            if self.animationCount > len(movement) - 1:
+                self.animationCount = 0
+        self.surf = pygame.image.load(movement[self.animationCount])
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+        self.rect.move_ip(self.speed * -1, 0)
+        if self.rect.right < 0:
+            self.kill()
+
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -134,6 +196,7 @@ bg2x = bg1.get_width()
 x = 0
 fps = 60
 isWalking = False
+enemyList = ['slime','mushroom','potato']
 
 # Main Game
 while running:
@@ -141,18 +204,41 @@ while running:
         if event.type == KEYUP:
             if event.key == K_RIGHT:
                 isWalking = False
+
         elif event.type == KEYDOWN:
             if event.key == K_RIGHT:
                 isWalking = True
+
         elif event.type == QUIT:
             running = False
+
         elif event.type == ADDENEMY:
-            new_enemy = enemy()
+            enemyType = random.choice(enemyList)
+            if enemyType == 'slime':
+                print('slime')
+                new_enemy = slime()
+            if enemyType == 'mushroom':
+                print('mushroom')
+                new_enemy = mushroom()
+            if enemyType == 'potato':
+                print('potato')
+                new_enemy = potato()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
 
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
+    enemies.update()
+
+    enemyHits = pygame.sprite.spritecollideany(player, enemies)
+    if enemyHits != None:
+        print(f"In Enemy Hits{enemyHits.type}")
+        if enemyHits.type == 'low-tier':
+            player.kill()
+        if enemyHits.type == 'mid-tier':
+            player.kill()
+        if enemyHits.type == 'high-tier':
+            player.kill()
 
     bg1x -= 1
     bg2x -= 1
