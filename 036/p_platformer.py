@@ -184,6 +184,13 @@ all_sprites.add(player)
 enemies = pygame.sprite.Group()
 ground = pygame.sprite.Group()
 
+Score = 0
+green=(0,180,0)
+myFont = pygame.font.SysFont("Comicsans", 40)
+Score_Label = myFont.render("Score: ", 1, green)
+Score_Value = myFont.render(str(Score),1,green)
+myEndFont = pygame.font.SysFont("Comicsans",80)
+End_Label = myEndFont.render("Game Over!!!",1,green)
 
 running = True
 background = ['assets/back.png']
@@ -234,11 +241,17 @@ while running:
     if enemyHits != None:
         print(f"In Enemy Hits{enemyHits.type}")
         if enemyHits.type == 'low-tier':
+            #animation
             player.kill()
+            #menu
         if enemyHits.type == 'mid-tier':
+            # animation
             player.kill()
+            # menu
         if enemyHits.type == 'high-tier':
+            # animation
             player.kill()
+            # menu
 
     bg1x -= 1
     bg2x -= 1
