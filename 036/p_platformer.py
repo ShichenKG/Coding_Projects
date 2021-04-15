@@ -37,6 +37,7 @@ class Player(pygame.sprite.Sprite):
                     'assets/playerL/Run_8.png','assets/playerL/Run_9.png','assets/playerL/Run_10.png','assets/playerL/Run_11.png']
     def __init__(self):
         super(Player,self).__init__()
+        self.dead = False
         self.isWalking = True
         self.isRunning = False
         self.isShooting = False
@@ -51,7 +52,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = 720
         self.Etype = 'Player'
 
-    def update(self,pressed_keys):
+    def update(self,pressed_keys,running):
         if pressed_keys[K_LEFT]:
             self.facing = 'left'
             self.walking = True
@@ -80,6 +81,9 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
+
+        if self.dead == True:
+            running = False
 
 class slime(pygame.sprite.Sprite):
     animationCount = 0
@@ -164,6 +168,33 @@ class potato(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
 
+class coin(pygame.sprite.Sprite):
+    animationCount = 0
+    isWalking = 0
+    isAttacking = 0
+    def __init__(self):
+        super(coin, self).__init__()
+        self.surf = pygame.image.load('assets/coin2.png')
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+        self.rect = self.surf.get_rect(center=(random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100), 600))
+        self.speed = random.randint(2, 5)
+        self.type = 'coin'
+
+    def update(self):
+        movement = ['assets/coin2.png']
+        rChoice = random.randint(1, 1000) % 100
+        if rChoice == 0:
+            self.surf = pygame.image.load(movement[self.animationCount])
+            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+            self.animationCount += 1
+            if self.animationCount > len(movement) - 1:
+                self.animationCount = 0
+        self.surf = pygame.image.load(movement[self.animationCount])
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+        self.rect.move_ip(self.speed * -1, 0)
+        if self.rect.right < 0:
+            self.kill()
+
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -185,7 +216,7 @@ enemies = pygame.sprite.Group()
 ground = pygame.sprite.Group()
 
 Score = 0
-green=(0,180,0)
+green=(0,80,0)
 myFont = pygame.font.SysFont("Comicsans", 40)
 Score_Label = myFont.render("Score: ", 1, green)
 Score_Value = myFont.render(str(Score),1,green)
@@ -203,7 +234,7 @@ bg2x = bg1.get_width()
 x = 0
 fps = 60
 isWalking = False
-enemyList = ['slime','mushroom','potato']
+enemyList = ['slime','mushroom','potato','coin']
 
 # Main Game
 while running:
@@ -230,28 +261,41 @@ while running:
             if enemyType == 'potato':
                 print('potato')
                 new_enemy = potato()
+            if enemyType == 'coin':
+                print('coin')
+                new_enemy = coin()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
 
     pressed_keys = pygame.key.get_pressed()
-    player.update(pressed_keys)
+    player.update(pressed_keys,running)
     enemies.update()
 
     enemyHits = pygame.sprite.spritecollideany(player, enemies)
     if enemyHits != None:
-        print(f"In Enemy Hits{enemyHits.type}")
-        if enemyHits.type == 'low-tier':
+        if player.kill():
+            running = False
+        elif enemyHits.type == 'low-tier':
+            print(f"Enemy Hits {enemyHits.type}")
             #animation
             player.kill()
+            player.dead = True
             #menu
-        if enemyHits.type == 'mid-tier':
+        elif enemyHits.type == 'mid-tier':
+            print(f"Enemy Hits {enemyHits.type}")
             # animation
             player.kill()
+            player.dead = True
             # menu
-        if enemyHits.type == 'high-tier':
+        elif enemyHits.type == 'high-tier':
+            print(f"Enemy Hits {enemyHits.type}")
             # animation
             player.kill()
+            player.dead = True
             # menu
+        elif enemyHits.type == 'coin':
+            Score += 1
+
 
     bg1x -= 1
     bg2x -= 1
@@ -264,6 +308,9 @@ while running:
 
     screen.blit(bg1, (bg1x, 0))
     screen.blit(bg2, (bg2x, 0))
+    Score_Value = myFont.render(str(Score), 1, green)
+    screen.blit(Score_Label, (SCREEN_WIDTH - 250, 2))
+    screen.blit(Score_Value, (SCREEN_WIDTH - 60, 2))
 
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
