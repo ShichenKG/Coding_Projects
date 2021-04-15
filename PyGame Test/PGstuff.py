@@ -7,7 +7,8 @@ def set_difficulty(value, difficulty):
     pass
 
 def start_the_game():
-    pass
+    running = True
+
 
 successes, failures = pygame.init()
 print("Initializing pygame: {0} successes and {1} failures.".format(successes, failures))
@@ -24,6 +25,8 @@ pygame.init()
 pygame.mixer.init()
 pygame.mixer.music.load('rick.mp3')
 pygame.mixer.music.play(-1)
+
+SG = pygame.USEREVENT +1
 
 
 
@@ -51,6 +54,9 @@ while menu:
     menu.add.button('Quit', pygame_menu.events.EXIT)
 
     menu.mainloop(screen)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.QUIT()
 
 while running:
     dt = clock.tick(FPS) / 1000  # Returns milliseconds between each call to 'tick'. The convert time to seconds.

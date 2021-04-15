@@ -1,7 +1,7 @@
 import pygame
 import pygame_menu
 
-class Player(pygame.sprite.Sprite):
+class player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.Surface((32, 32))
@@ -16,12 +16,14 @@ pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
+running = True
+FPS = 30
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 HOVER_COLOR = (50, 70, 90)
 # Don't define new font objects in your while loop (that's inefficient).
-FONT = pygame.font.SysFont ("Times New Norman", 60)
+FONT = pygame.font.SysFont ("Comic Sans MS", 60)
 # If the text surfaces and button rects don't change,
 # you can define them once outside of the while loop.
 text1 = FONT.render("START", True, WHITE)
@@ -40,64 +42,24 @@ buttons = [
     [text4, rect4, BLACK]
     ]
 
-def game_menu():
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            elif event.type == pygame.MOUSEMOTION:
-                for button in buttons:
 
-                    # button[1] is the rect. Use its collidepoint method with
-                    # the `event.pos` (mouse position) to detect collisions.
-                    if button[1].collidepoint(event.pos):
-                        # Set the button's color to the hover color.
-                        button[2] = HOVER_COLOR
-                    else:
-                        # Otherwise reset the color to black.
-                        button[2] = BLACK
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                pass
-def game():
-    while running:
-        dt = clock.tick(FPS) / 1000  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
-        screen.fill(BLACK)  # Fill the screen with background color.
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+        elif event.type == pygame.MOUSEMOTION:
+            for button in buttons:
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
-                    player.velocity[1] = -200 * dt  # 200 pixels per second
-                elif event.key == pygame.K_s:
-                    player.velocity[1] = 200 * dt
-                elif event.key == pygame.K_a:
-                    player.velocity[0] = -200 * dt
-                elif event.key == pygame.K_d:
-                    player.velocity[0] = 200 * dt
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_w or event.key == pygame.K_s:
-                    player.velocity[1] = 0
-                elif event.key == pygame.K_a or event.key == pygame.K_d:
-                    player.velocity[0] = 0
-
-        player.update()
-
-        screen.blit(player.image, player.rect)
-        pygame.display.update()  # Or pygame.display.flip()
-
-        screen.fill((20, 50, 70))
-
-        # Draw the buttons with their current colors at their rects.
-        # You can unpack the button lists directly in the head of the loop.
-        for text, rect, color in buttons:
-            pygame.draw.rect(screen, color, rect)
-            screen.blit(text, rect)
-
-        pygame.display.flip()
-        clock.tick(15)
+                # button[1] is the rect. Use its collidepoint method with
+                # the `event.pos` (mouse position) to detect collisions.
+                if button[1].collidepoint(event.pos):
+                    # Set the button's color to the hover color.
+                    button[2] = HOVER_COLOR
+                else:
+                    # Otherwise reset the color to black.
+                    button[2] = BLACK
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            pass
 
 
-game_intro()
-pygame.quit()

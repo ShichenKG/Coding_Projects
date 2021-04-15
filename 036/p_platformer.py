@@ -273,27 +273,25 @@ while running:
 
     enemyHits = pygame.sprite.spritecollideany(player, enemies)
     if enemyHits != None:
-        if player.kill():
-            running = False
-        elif enemyHits.type == 'low-tier':
-            print(f"Enemy Hits {enemyHits.type}")
+        print(f"Enemy Hits {enemyHits.type}")
+        if enemyHits.type == 'low-tier':
             #animation
             player.kill()
-            player.dead = True
+            running = False
             #menu
         elif enemyHits.type == 'mid-tier':
-            print(f"Enemy Hits {enemyHits.type}")
+
             # animation
             player.kill()
-            player.dead = True
+            running = False
             # menu
         elif enemyHits.type == 'high-tier':
-            print(f"Enemy Hits {enemyHits.type}")
             # animation
             player.kill()
-            player.dead = True
+            running = False
             # menu
         elif enemyHits.type == 'coin':
+            enemyHits.kill()
             Score += 1
 
 
