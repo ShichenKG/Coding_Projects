@@ -9,10 +9,8 @@
 #######################################
 
 
-import pygame
-import random
-import sys
-import os
+import pygame, random, sys, os
+from pygame.locals import *
 
 from pygame.locals import(
     RLEACCEL,
@@ -195,14 +193,211 @@ class coin(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
 
+# Main Game
+def game():
+    Score = 0
+    green = (0, 80, 0)
+    myFont = pygame.font.SysFont("Comicsans", 40)
+    Score_Label = myFont.render("Score: ", 1, green)
+    Score_Value = myFont.render(str(Score), 1, green)
+    myEndFont = pygame.font.SysFont("Comicsans", 80)
+    End_Label = myEndFont.render("Game Over!!!", 1, green)
+
+    background = ['assets/back.png']
+    currentBg = 0
+    bkgd = pygame.image.load(background[currentBg])
+    bg1 = pygame.image.load('assets/back.png').convert()
+    bg2 = pygame.image.load('assets/back.png').convert()
+    bg1x = 0
+    bg2x = bg1.get_width()
+    x = 0
+    fps = 60
+    isWalking = False
+    enemyList = ['slime', 'mushroom', 'potato', 'coin']
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == KEYUP:
+                if event.key == K_RIGHT:
+                    isWalking = False
+
+            elif event.type == KEYDOWN:
+                if event.key == K_RIGHT:
+                    isWalking = True
+
+            elif event.type == QUIT:
+                running = False
+
+            elif event.type == ADDENEMY:
+                enemyType = random.choice(enemyList)
+                if enemyType == 'slime':
+                    print('slime')
+                    new_enemy = slime()
+                if enemyType == 'mushroom':
+                    print('mushroom')
+                    new_enemy = mushroom()
+                if enemyType == 'potato':
+                    print('potato')
+                    new_enemy = potato()
+                if enemyType == 'coin':
+                    print('coin')
+                    new_enemy = coin()
+                enemies.add(new_enemy)
+                all_sprites.add(new_enemy)
+
+        pressed_keys = pygame.key.get_pressed()
+        player.update(pressed_keys,running)
+        enemies.update()
+
+        enemyHits = pygame.sprite.spritecollideany(player, enemies)
+        if enemyHits != None:
+            print(f"Enemy Hits {enemyHits.type}")
+            if enemyHits.type == 'low-tier':
+                #animation
+                player.kill()
+                running = False
+                #menu
+            elif enemyHits.type == 'mid-tier':
+
+                # animation
+                player.kill()
+                running = False
+                # menu
+            elif enemyHits.type == 'high-tier':
+                # animation
+                player.kill()
+                running = False
+                # menu
+            elif enemyHits.type == 'coin':
+                enemyHits.kill()
+                Score += 1
+
+
+        bg1x -= 1
+        bg2x -= 1
+
+        if bg1x < bg1.get_width() * -1:
+            bg1x = bg2.get_width()
+        if bg2x < bg2.get_width() * -1:
+            bg2x = bg1.get_width()
+
+
+        screen.blit(bg1, (bg1x, 0))
+        screen.blit(bg2, (bg2x, 0))
+        Score_Value = myFont.render(str(Score), 1, green)
+        screen.blit(Score_Label, (SCREEN_WIDTH - 250, 2))
+        screen.blit(Score_Value, (SCREEN_WIDTH - 60, 2))
+
+        for entity in all_sprites:
+            screen.blit(entity.surf, entity.rect)
+
+        pygame.display.update()
+        clock.tick(fps)
+
+class button():
+    def __init__(self, color, x, y, width, height, text=''):
+        self.color = color
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.text = text
+
+    def draw(self, win, outline=None):
+        # Call this method to draw the button on the screen
+        if outline:
+            pygame.draw.rect(win, outline, (self.x - 2, self.y - 2, self.width + 4, self.height + 4), 0)
+
+        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 0)
+
+        if self.text != '':
+            font = pygame.font.SysFont('Comic Sans MS', 60)
+            text = font.render(self.text, 1, (0, 0, 0))
+            win.blit(text, (
+            self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
+
+
+    def isOver(self, pos):
+        if pos[0] > self.x and pos[0] < self.x + self.width:
+            if pos[1] > self.y and pos[1] < self.y + self.height:
+                return True
+
+        return False
+
+def main_menu():
+    # Non copyright music, "Bread" by LuKremBo
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load('bread.mp3')
+    pygame.mixer.music.play(-1)
+    while True:
+
+        screen.fill((70, 171, 97))
+        title = button((70, 171, 97), 540, 50, 220, 100, 'Main Menu')
+        title.draw(screen)
+
+        button_1 = button((0,255,0), 540, 200, 220, 100, 'Start')
+        button_2 = button((0,255,0), 540, 350, 220, 100, 'Options')
+        button_3 = button((0,255,0), 540, 500, 220, 100, 'Quit')
+        button_1.draw(screen)
+        button_2.draw(screen)
+        button_3.draw(screen)
+
+        for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button_1.isOver(pos):
+                    game()
+                if button_2.isOver(pos):
+                    options()
+                if button_3.isOver(pos):
+                    pygame.quit()
+                    sys.exit()
+            if event.type == pygame.MOUSEMOTION:
+                if button_1.isOver(pos):
+                    button_1.color=(200,0,0)
+                else:
+                    button_1.color=(0,255,0)
+
+        pygame.display.update()
+        clock.tick(60)
+
+def options():
+    running = True
+    while running:
+        screen.fill((70, 171, 97))
+
+        title = button((70, 171, 97), 540, 50, 220, 100, 'Options')
+        title.draw(screen)
+        button1 = button((0, 255, 0), 540, 200, 220, 100, 'Back')
+        button1.draw(screen)
+
+        for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    running = False
+            if event.type == MOUSEBUTTONDOWN:
+                if button1.isOver(pos):
+                    running = False
+
+        pygame.display.update()
+        clock.tick(60)
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 
 # Initialize pygame
 pygame.init()
+pygame.mixer.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+file = 'some.mp3'
 
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 4000)
@@ -215,104 +410,5 @@ all_sprites.add(player)
 enemies = pygame.sprite.Group()
 ground = pygame.sprite.Group()
 
-Score = 0
-green=(0,80,0)
-myFont = pygame.font.SysFont("Comicsans", 40)
-Score_Label = myFont.render("Score: ", 1, green)
-Score_Value = myFont.render(str(Score),1,green)
-myEndFont = pygame.font.SysFont("Comicsans",80)
-End_Label = myEndFont.render("Game Over!!!",1,green)
 
-running = True
-background = ['assets/back.png']
-currentBg = 0
-bkgd = pygame.image.load(background[currentBg])
-bg1 = pygame.image.load('assets/back.png').convert()
-bg2 = pygame.image.load('assets/back.png').convert()
-bg1x = 0
-bg2x = bg1.get_width()
-x = 0
-fps = 60
-isWalking = False
-enemyList = ['slime','mushroom','potato','coin']
-
-# Main Game
-while running:
-    for event in pygame.event.get():
-        if event.type == KEYUP:
-            if event.key == K_RIGHT:
-                isWalking = False
-
-        elif event.type == KEYDOWN:
-            if event.key == K_RIGHT:
-                isWalking = True
-
-        elif event.type == QUIT:
-            running = False
-
-        elif event.type == ADDENEMY:
-            enemyType = random.choice(enemyList)
-            if enemyType == 'slime':
-                print('slime')
-                new_enemy = slime()
-            if enemyType == 'mushroom':
-                print('mushroom')
-                new_enemy = mushroom()
-            if enemyType == 'potato':
-                print('potato')
-                new_enemy = potato()
-            if enemyType == 'coin':
-                print('coin')
-                new_enemy = coin()
-            enemies.add(new_enemy)
-            all_sprites.add(new_enemy)
-
-    pressed_keys = pygame.key.get_pressed()
-    player.update(pressed_keys,running)
-    enemies.update()
-
-    enemyHits = pygame.sprite.spritecollideany(player, enemies)
-    if enemyHits != None:
-        print(f"Enemy Hits {enemyHits.type}")
-        if enemyHits.type == 'low-tier':
-            #animation
-            player.kill()
-            running = False
-            #menu
-        elif enemyHits.type == 'mid-tier':
-
-            # animation
-            player.kill()
-            running = False
-            # menu
-        elif enemyHits.type == 'high-tier':
-            # animation
-            player.kill()
-            running = False
-            # menu
-        elif enemyHits.type == 'coin':
-            enemyHits.kill()
-            Score += 1
-
-
-    bg1x -= 1
-    bg2x -= 1
-
-    if bg1x < bg1.get_width() * -1:
-        bg1x = bg2.get_width()
-    if bg2x < bg2.get_width() * -1:
-        bg2x = bg1.get_width()
-
-
-    screen.blit(bg1, (bg1x, 0))
-    screen.blit(bg2, (bg2x, 0))
-    Score_Value = myFont.render(str(Score), 1, green)
-    screen.blit(Score_Label, (SCREEN_WIDTH - 250, 2))
-    screen.blit(Score_Value, (SCREEN_WIDTH - 60, 2))
-
-    for entity in all_sprites:
-        screen.blit(entity.surf, entity.rect)
-
-    pygame.display.update()
-    clock.tick(fps)
-
+main_menu()

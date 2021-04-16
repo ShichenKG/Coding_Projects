@@ -1,13 +1,64 @@
-import pygame
-import pygame_menu
-import math
+import pygame, pygame_menu, sys
+from pygame.locals import *
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface((32, 32))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
+        self.velocity = [0, 0]
+
+    def update(self):
+        self.rect.move_ip(*self.velocity)
 
 def set_difficulty(value, difficulty):
     pass
 
+def main_menu():
+    menu = True
+    while menu:
+        menu = pygame_menu.Menu(720, 1280, 'Whales',
+                                theme=pygame_menu.themes.THEME_GREEN)
+        menu.add.text_input('Name: ', default='This is the name field')
+        menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
+        menu.add.button('Play', print('Yup'))
+        menu.add.button('Quit', pygame_menu.events.EXIT)
+
+        menu.mainloop(screen)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.QUIT()
+
 def start_the_game():
     running = True
+    player = Player()
+    while running:
+        dt = clock.tick(FPS) / 1000  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
+        screen.fill(BLACK)  # Fill the screen with background color.
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    player.velocity[1] = -200 * dt  # 200 pixels per second
+                elif event.key == pygame.K_s:
+                    player.velocity[1] = 200 * dt
+                elif event.key == pygame.K_a:
+                    player.velocity[0] = -200 * dt
+                elif event.key == pygame.K_d:
+                    player.velocity[0] = 200 * dt
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_w or event.key == pygame.K_s:
+                    player.velocity[1] = 0
+                elif event.key == pygame.K_a or event.key == pygame.K_d:
+                    player.velocity[0] = 0
+
+        player.update()
+
+        screen.blit(player.image, player.rect)
+        pygame.display.update()
 
 
 successes, failures = pygame.init()
@@ -26,65 +77,8 @@ pygame.mixer.init()
 pygame.mixer.music.load('rick.mp3')
 pygame.mixer.music.play(-1)
 
-SG = pygame.USEREVENT +1
-
-
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.Surface((32, 32))
-        self.image.fill(WHITE)
-        self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
-        self.velocity = [0, 0]
-
-    def update(self):
-        self.rect.move_ip(*self.velocity)
-
-
-player = Player()
-running = False
-menu = True
-while menu:
-    menu = pygame_menu.Menu(720, 1280, 'Whales',
-                            theme=pygame_menu.themes.THEME_GREEN)
-    menu.add.text_input('Name: ', default='This is the name field')
-    menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
-    menu.add.button('Play', start_the_game)
-    menu.add.button('Quit', pygame_menu.events.EXIT)
-
-    menu.mainloop(screen)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.QUIT()
-
-while running:
-    dt = clock.tick(FPS) / 1000  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
-    screen.fill(BLACK)  # Fill the screen with background color.
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
-                player.velocity[1] = -200 * dt  # 200 pixels per second
-            elif event.key == pygame.K_s:
-                player.velocity[1] = 200 * dt
-            elif event.key == pygame.K_a:
-                player.velocity[0] = -200 * dt
-            elif event.key == pygame.K_d:
-                player.velocity[0] = 200 * dt
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_w or event.key == pygame.K_s:
-                player.velocity[1] = 0
-            elif event.key == pygame.K_a or event.key == pygame.K_d:
-                player.velocity[0] = 0
-
-    player.update()
-
-    screen.blit(player.image, player.rect)
-    pygame.display.update()  # Or pygame.display.flip()
+main_menu()
 
 print("Exited the game loop. Game will quit...")
-quit()  # Not actually necessary since the script will exit anyway.
+
 
