@@ -258,7 +258,6 @@ def game():
                 running = False
                 #menu
             elif enemyHits.type == 'mid-tier':
-
                 # animation
                 player.kill()
                 running = False
