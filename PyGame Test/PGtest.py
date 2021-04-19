@@ -14,13 +14,15 @@ class Player(pygame.sprite.Sprite):
 
 
 class button():
-    def __init__(self, color, x, y, width, height, text=''):
+    def __init__(self, color, x, y, width, height, text='', font = '',size = 60):
         self.color = color
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.text = text
+        self.font = font
+        self.size = size
 
     def draw(self, win, outline=None):
         # Call this method to draw the button on the screen
@@ -30,7 +32,7 @@ class button():
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 0)
 
         if self.text != '':
-            font = pygame.font.SysFont('Comic Sans MS', 60)
+            font = pygame.font.SysFont(self.font,self.size)
             text = font.render(self.text, 1, (0, 0, 0))
             win.blit(text, (
             self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
@@ -54,9 +56,9 @@ def main_menu():
         title = button((70, 171, 97), 540, 50, 220, 100, 'Main Menu')
         title.draw(screen)
 
-        button_1 = button((0,255,0), 540, 200, 220, 100, 'Start')
-        button_2 = button((0,255,0), 540, 350, 220, 100, 'Options')
-        button_3 = button((0,255,0), 540, 500, 220, 100, 'Quit')
+        button_1 = button((0,255,0), 540, 200, 220, 100, 'Start',('Comic Sans MS',60))
+        button_2 = button((0,255,0), 540, 350, 220, 100, 'Options',('Comic Sans MS',60))
+        button_3 = button((0,255,0), 540, 500, 220, 100, 'Quit',('Comic Sans MS',60))
         button_1.draw(screen)
         button_2.draw(screen)
         button_3.draw(screen)
@@ -81,7 +83,7 @@ def main_menu():
                     button_1.color=(0,255,0)
 
         pygame.display.update()
-        mainClock.tick(60)
+        clock.tick(60)
 
 
 
@@ -93,8 +95,8 @@ def game():
     running = True
     player = Player()
     while running:
-        dt = clock.tick(FPS) / 1000  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
-        screen.fill(BLACK)  # Fill the screen with background color.
+        dt = clock.tick(FPS) / 1000
+        screen.fill(BLACK)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -129,13 +131,22 @@ def game():
 
 def options():
     running = True
+    global num
+    global fullscreen
+    monitor_size = [pygame.display.Info().current_w,pygame.display.Info().current_h]
+    if fullscreen:
+        screen = pygame.display.set_mode(monitor_size, pygame.FULLSCREEN)
+    else:
+        screen = pygame.display.set_mode((1280,720))
     while running:
         screen.fill((70, 171, 97))
 
-        title = button((70, 171, 97), 540, 50, 220, 100, 'Options')
+        title = button((70, 171, 97), 540, 50, 220, 100, 'Options',('Comic Sans MS'),60)
         title.draw(screen)
-        button1 = button((0, 255, 0), 540, 200, 220, 100, 'Back')
+        button1 = button((0, 255, 0), 540, 500, 220, 100, 'Back',('Comic Sans MS'),60)
+        button2 = button((0,255,0), 540, 200, 220, 100, 'FullScreen',('Comic Sans MS'),40)
         button1.draw(screen)
+        button2.draw(screen)
 
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
@@ -148,9 +159,20 @@ def options():
             if event.type == MOUSEBUTTONDOWN:
                 if button1.isOver(pos):
                     running = False
+                if button2.isOver(pos):
+                    num += 1
+                    if (num % 2) == 0:
+                        fullscreen = True
+                    else:
+                        fullscreen = False
+                    if fullscreen:
+                        screen = pygame.display.set_mode(monitor_size, pygame.FULLSCREEN)
+                    else:
+                        screen = pygame.display.set_mode((1280,720))
+
 
         pygame.display.update()
-        mainClock.tick(60)
+        clock.tick(60)
 
 pygame.init()
 pygame.mixer.init()
@@ -161,8 +183,11 @@ font = 'Comic Sans MS'
 successes, failures = pygame.init()
 print("Initializing pygame: {0} successes and {1} failures.".format(successes, failures))
 pygame.time.delay(1000)
-
 screen = pygame.display.set_mode((1280, 720))
+global fullscreen
+fullscreen = False
+global num
+num = 1
 clock = pygame.time.Clock()
 FPS = 60
 

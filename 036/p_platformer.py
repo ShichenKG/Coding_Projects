@@ -33,15 +33,17 @@ class Player(pygame.sprite.Sprite):
     walkingLeft = ['assets/playerL/Run.png','assets/playerL/Run_2.png','assets/playerL/Run_3.png','assets/playerL/Run_4.png',
                     'assets/playerL/Run_5.png','assets/playerL/Run_6.png','assets/playerL/Run_7.png',
                     'assets/playerL/Run_8.png','assets/playerL/Run_9.png','assets/playerL/Run_10.png','assets/playerL/Run_11.png']
+
     def __init__(self):
         super(Player,self).__init__()
         self.dead = False
         self.isWalking = True
         self.isRunning = False
         self.isShooting = False
+        self.isJumping = False
         self.walkCount = 0
         self.runCount = 0
-        self.jumpCount = 0
+        self.jumpCount = 15
         self.facing = 'right'
         self.surf = pygame.image.load(self.walkingRight[self.walkCount])
         self.surf.set_colorkey((0,0,0), RLEACCEL)
@@ -58,7 +60,7 @@ class Player(pygame.sprite.Sprite):
                 self.walkCount = 0
             self.surf = pygame.image.load(self.walkingLeft[self.walkCount])
             self.surf.set_colorkey((0,0,0), RLEACCEL)
-            self.rect.x -= 1
+            self.rect.x -= 5
             self.walkCount += 1
 
         if pressed_keys[K_RIGHT]:
@@ -68,7 +70,7 @@ class Player(pygame.sprite.Sprite):
                 self.walkCount = 0
             self.surf = pygame.image.load(self.walkingRight[self.walkCount])
             self.surf.set_colorkey((0, 0, 0), RLEACCEL)
-            self.rect.x += 1
+            self.rect.x += 5
             self.walkCount += 1
 
         if self.rect.left < 0:
@@ -82,6 +84,27 @@ class Player(pygame.sprite.Sprite):
 
         if self.dead == True:
             running = False
+
+    def setstate(self, state, value):
+        if state == 'jumping':
+            self.isJumping = value
+
+    def jump(self):
+        if self.isJumping:
+            if self.jumpCount >= -15:
+                neg = 1
+                if self.jumpCount < 0:
+                    neg = -1
+                self.rect.y -= self.jumpCount ** 2 * 0.25 * neg
+                if self.facing == 'right':
+                    self.rect.x += 3
+                else:
+                    self.rect.x -= 3
+                self.jumpCount -= 1
+            else:
+                self.isJumping = False
+                self.jumpCount = 15
+                self.rect.y = 750
 
 class slime(pygame.sprite.Sprite):
     animationCount = 0
@@ -224,6 +247,8 @@ def game():
             elif event.type == KEYDOWN:
                 if event.key == K_RIGHT:
                     isWalking = True
+                if event.key == K_UP:
+                    player.setstate('jumping', True)
 
             elif event.type == QUIT:
                 running = False
@@ -248,6 +273,7 @@ def game():
         pressed_keys = pygame.key.get_pressed()
         player.update(pressed_keys,running)
         enemies.update()
+        player.jump()
 
         enemyHits = pygame.sprite.spritecollideany(player, enemies)
         if enemyHits != None:
