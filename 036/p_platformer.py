@@ -9,7 +9,8 @@
 #######################################
 
 
-import pygame, random, sys, os
+import pygame, random, sys
+import PySimpleGUI as sg
 from pygame.locals import *
 
 from pygame.locals import(
@@ -38,7 +39,6 @@ class Player(pygame.sprite.Sprite):
         super(Player,self).__init__()
         self.dead = False
         self.isWalking = True
-        self.isRunning = False
         self.isShooting = False
         self.isJumping = False
         self.walkCount = 0
@@ -84,6 +84,8 @@ class Player(pygame.sprite.Sprite):
 
         if self.dead == True:
             running = False
+        if pressed_keys[K_RETURN]:
+            self.isShooting = True
 
     def setstate(self, state, value):
         if state == 'jumping':
@@ -105,6 +107,21 @@ class Player(pygame.sprite.Sprite):
                 self.isJumping = False
                 self.jumpCount = 15
                 self.rect.y = 750
+
+class blast(pygame.sprite.Sprite):
+    def __init__(self):
+        super(blast, self).__init__()
+        pew = ['assets/pew.png']
+        self.surf = pygame.image.load(pew).convert_alpha()
+        self.rect = self.surf.get_rect(
+            center = (player.rect.left + 40,player.rect.bottom - 75),
+        )
+
+    def update(self):
+        if self.rect.bottom <= 0:
+            self.kill()
+        else:
+            self.rect.move_ip(10,0)
 
 class slime(pygame.sprite.Sprite):
     animationCount = 0
@@ -218,7 +235,7 @@ class coin(pygame.sprite.Sprite):
 
 # Main Game
 def game():
-    Score = 0
+    global Score
     green = (0, 80, 0)
     myFont = pygame.font.SysFont("Comicsans", 40)
     Score_Label = myFont.render("Score: ", 1, green)
@@ -237,7 +254,9 @@ def game():
     fps = 60
     isWalking = False
     enemyList = ['slime', 'mushroom', 'potato', 'coin']
+    global running
     running = True
+
     while running:
         for event in pygame.event.get():
             if event.type == KEYUP:
@@ -249,6 +268,11 @@ def game():
                     isWalking = True
                 if event.key == K_UP:
                     player.setstate('jumping', True)
+
+            elif event.type == K_RETURN:
+                new_blast = blast()
+                blasts.add(new_blast)
+                all_sprites.add(new_blast)
 
             elif event.type == QUIT:
                 running = False
@@ -279,23 +303,27 @@ def game():
         if enemyHits != None:
             print(f"Enemy Hits {enemyHits.type}")
             if enemyHits.type == 'low-tier':
-                #animation
-                player.kill()
-                running = False
-                #menu
+                endgame()
+
             elif enemyHits.type == 'mid-tier':
-                # animation
-                player.kill()
-                running = False
-                # menu
+                endgame()
+
             elif enemyHits.type == 'high-tier':
-                # animation
-                player.kill()
-                running = False
-                # menu
+                endgame()
+
             elif enemyHits.type == 'coin':
                 enemyHits.kill()
-                Score += 1
+                Score += 5
+
+        blastshit = pygame.sprite.spritecollideany(blasts, enemies)
+        if blastshit != None:
+            print(f'Blast hit {enemyHits.type}')
+            if blastshit.type == 'low-tier':
+                pass
+            if blastshit.type == 'med-tier':
+                pass
+            if blastshit.type == 'high-tier':
+                pass
 
 
         bg1x -= 1
@@ -348,6 +376,17 @@ class button():
                 return True
 
         return False
+
+def endgame():
+    global running
+    enemyHits = pygame.sprite.spritecollideany(player, enemies)
+    #die animation
+    running = False
+    enemyHits.kill()
+    player.rect.x = 0
+
+def playagain():
+    pass
 
 def main_menu():
     # Non copyright music, "Bread" by LuKremBo
@@ -424,6 +463,8 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 file = 'some.mp3'
 
+global Score
+Score = 0
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 4000)
 
@@ -432,6 +473,8 @@ player = Player()
 #All Sprite groups
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
+
+blasts = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
 ground = pygame.sprite.Group()
 
