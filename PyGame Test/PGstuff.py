@@ -1,84 +1,10 @@
-import pygame, pygame_menu, sys
-from pygame.locals import *
+from tqdm import tqdm
+loop = tqdm(total = 500000, position=0, leave = False)
+for k in range(500000):
+    loop.set_description('Loading...'.format(k))
+    loop.update(1)
+loop.close()
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.Surface((32, 32))
-        self.image.fill(WHITE)
-        self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
-        self.velocity = [0, 0]
-
-    def update(self):
-        self.rect.move_ip(*self.velocity)
-
-def set_difficulty(value, difficulty):
-    pass
-
-def main_menu():
-    menu = True
-    while menu:
-        menu = pygame_menu.Menu(720, 1280, 'Whales',
-                                theme=pygame_menu.themes.THEME_GREEN)
-        menu.add.text_input('Name: ', default='This is the name field')
-        menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
-        menu.add.button('Play', print('Yup'))
-        menu.add.button('Quit', pygame_menu.events.EXIT)
-
-        menu.mainloop(screen)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.QUIT()
-
-def start_the_game():
-    running = True
-    player = Player()
-    while running:
-        dt = clock.tick(FPS) / 1000  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
-        screen.fill(BLACK)  # Fill the screen with background color.
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
-                    player.velocity[1] = -200 * dt  # 200 pixels per second
-                elif event.key == pygame.K_s:
-                    player.velocity[1] = 200 * dt
-                elif event.key == pygame.K_a:
-                    player.velocity[0] = -200 * dt
-                elif event.key == pygame.K_d:
-                    player.velocity[0] = 200 * dt
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_w or event.key == pygame.K_s:
-                    player.velocity[1] = 0
-                elif event.key == pygame.K_a or event.key == pygame.K_d:
-                    player.velocity[0] = 0
-
-        player.update()
-
-        screen.blit(player.image, player.rect)
-        pygame.display.update()
-
-
-successes, failures = pygame.init()
-print("Initializing pygame: {0} successes and {1} failures.".format(successes, failures))
-pygame.time.delay(1000)
-
-screen = pygame.display.set_mode((1280, 720))
-clock = pygame.time.Clock()
-FPS = 60
-
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-file = 'some.mp3'
-pygame.init()
-pygame.mixer.init()
-pygame.mixer.music.load('rick.mp3')
-pygame.mixer.music.play(-1)
-
-main_menu()
-
-print("Exited the game loop. Game will quit...")
-
-
+from tqdm.auto import tqdm
+for i in tqdm(range(100001)):
+    print('', end = '\r')
