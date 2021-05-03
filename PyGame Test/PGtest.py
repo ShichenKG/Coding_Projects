@@ -45,6 +45,44 @@ class button():
 
         return False
 
+
+class button2():
+    width = 180
+    height = 70
+
+    def __init__(self, x, y,button,hover,clicked):
+        self.x = x
+        self.y = y
+        self.button = button
+        self.hover = hover
+        self.clicked = clicked
+
+    def draw(self):
+
+        global clicked
+        action = False
+
+        # get mouse position
+        pos = pygame.mouse.get_pos()
+
+        # create pygame Rect object for the button
+        button_rect = Rect(self.x, self.y, self.width, self.height)
+
+        # check mouseover and clicked conditions
+        if button_rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1:
+                clicked = True
+                pygame.draw.rect(screen, self.clicked, button_rect)
+            elif pygame.mouse.get_pressed()[0] == 0 and clicked == True:
+                clicked = False
+                action = True
+            else:
+                pygame.draw.rect(screen, self.hover, button_rect)
+        else:
+            pygame.draw.rect(screen, self.button, button_rect)
+
+        return action
+
 def main_menu():
     # Non copyright music, "Bread" by LuKremBo
     pygame.mixer.music.stop()
@@ -62,6 +100,8 @@ def main_menu():
         button_1.draw(screen)
         button_2.draw(screen)
         button_3.draw(screen)
+
+
 
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
@@ -194,5 +234,8 @@ FPS = 60
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 file = 'some.mp3'
+DL1 = 'DL1.png'
+DL2 = 'DL2.png'
+DL3 = 'DL1.png'
 
 main_menu()
