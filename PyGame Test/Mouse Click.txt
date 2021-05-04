@@ -1,7 +1,0 @@
-mouse = pygame.mouse.get_pos()
-    click = pygame.mouse.get_pressed()
-
-    if x + w > mouse[0] > x and y + h > mouse[1] > y:
-        gameDisplay.blit(active, (x, y))
-    else:
-        gameDisplay.blit(inactive, (x, y))
