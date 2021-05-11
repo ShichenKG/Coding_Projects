@@ -290,10 +290,10 @@ def UImanage():
         pygame.display.update()
 
 def ImageTouch():
-    redSquare = pygame.image.load("assets/DL1.png").convert_alpha()
-
-    screen.blit(redSquare, (200,200))  # paint to screen
-    pygame.display.flip()  # paint screen one time
+    Door = pygame.sprite.Sprite
+    Door.image1 = pygame.image.load('assets/DL1.png').convert_alpha()
+    Door.image2 = pygame.image.load('assets/DL2.png').convert_alpha()
+    Door.image = Door.image1
 
     run = True
     while run:
@@ -303,11 +303,19 @@ def ImageTouch():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 print("You are clicking", event.button)
-                if redSquare.get_rect(center=(200,200)).collidepoint(pygame.mouse.get_pos()):
+                if Door.image.get_rect(center=(200,200)).collidepoint(pygame.mouse.get_pos()):
                     print('Touching')
             if event.type == pygame.MOUSEBUTTONUP:
                 print("You released", event.button)
 
+        if Door.image.get_rect(center=(200, 200)).collidepoint(pygame.mouse.get_pos()):
+            Door.image = Door.image2
+        else:
+            Door.image = Door.image1
+
+        screen.fill((0,0,0))
+        screen.blit(Door.image, (200, 200))  # paint to screen
+        pygame.display.flip()  # paint screen one time
         pygame.display.update()
 
-ImageTouch()
+Loadingbartest()
