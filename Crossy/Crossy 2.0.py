@@ -8,6 +8,7 @@ GRAY = (84,84,84)
 BLACK = (0,0,0)
 clock = pygame.time.Clock()
 font = pygame.font.SysFont('Comic Sans MS',65)
+Level = 1
 
 class Game:
     TICK = 60
@@ -56,8 +57,6 @@ class Game:
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                         direction = 0
 
-                print(event)
-
             self.SCREEN.fill(GRAY)
             self.SCREEN.blit(self.image,(0,0))
 
@@ -86,9 +85,12 @@ class Game:
                     clock.tick(0.3)
 
             if player.detection(treasure):
+                global Level
+                Level += 1
+                print(Level)
                 running = False
                 win = True
-                text = font.render('You Win', True, BLACK)
+                text = font.render('Level ' + str(Level), True, BLACK)
                 self.SCREEN.blit(text, (250, 150))
                 pygame.display.update()
                 clock.tick(0.5)
@@ -99,8 +101,10 @@ class Game:
         if win == True:
             self.gameloop(level_speed + 0.5)
 
+
         else:
-            return
+            lose()
+
 
 class GameObject:
 
@@ -154,6 +158,7 @@ class Enemy(GameObject):
         elif self.x_pos >= max_width - 60:
             self.speed = -abs(self.speed)
         self.x_pos += self.speed
+
 
 
 new_game = Game('b.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
