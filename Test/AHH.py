@@ -24,19 +24,31 @@ class Title(arcade.View):
     # Setting up what the player can see
     def setup(self):
         # Adds the image to the background
-        self.background = arcade.load_texture('wide.png')
+        self.background = arcade.load_texture('assets/wide.png')
 
-        button_normal = arcade.load_texture('quit1.png')
-        hovered_texture = arcade.load_texture('quit2.png')
-        pressed_texture = arcade.load_texture('quit3.png')
+        button_normal = arcade.load_texture('assets/Q1.png')
+        hovered_texture = arcade.load_texture('assets/Q2.png')
+        pressed_texture = arcade.load_texture('assets/Q1.png')
         button = arcade.gui.UIImageButton(
-            center_x=left_column_x,
-            center_y=y_slot * 1,
+            center_x= 620,
+            center_y= 380,
             normal_texture=button_normal,
             hover_texture=hovered_texture,
             press_texture=pressed_texture,
         )
         self.ui_manager.add_ui_element(button)
+
+        button_normal1 = arcade.load_texture('assets/Start1.png')
+        hovered_texture1 = arcade.load_texture('assets/Start2.png')
+        pressed_texture1 = arcade.load_texture('assets/Start1.png')
+        button2 = arcade.gui.UIImageButton(
+            center_x= 620,
+            center_y= 460,
+            normal_texture=button_normal1,
+            hover_texture=hovered_texture1,
+            press_texture=pressed_texture1,
+        )
+        self.ui_manager.add_ui_element(button2)
 
     def on_draw(self):
         arcade.start_render()
