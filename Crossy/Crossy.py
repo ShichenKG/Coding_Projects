@@ -15,12 +15,11 @@ pygame.init()
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = '001'
-GRAY = (84, 84, 84)
-BLACK = (0, 0, 0)
+GRAY = (84,84,84)
+BLACK = (0,0,0)
 clock = pygame.time.Clock()
-font = pygame.font.SysFont('Comic Sans MS', 65)
+font = pygame.font.SysFont('Comic Sans MS',65)
 Level = 1
-
 
 # Parent Class that controls the entire game
 class Game:
@@ -41,21 +40,21 @@ class Game:
         self.image = pygame.transform.scale(background, (width, height))
 
     # Shows stuff on screen, and runs events
-    def gameloop(self, level_speed):
+    def gameloop(self,level_speed):
         running = True
         win = False
         direction = 0
 
-        player = Player('p.png', 'p2.png', 375, 500, 50, 50)
-        enemy1 = Enemy('e.png', 'ee.png', 20, 400, 50, 50)
+        player = Player('p.png','p2.png',375,500, 50, 50)
+        enemy1 = Enemy('e.png','ee.png', 20, 400,50,50)
         enemy1.speed *= level_speed
-        enemy2 = Enemy('e2.png', 'ee2.png', 50, 300, 50, 50)
+        enemy2 = Enemy('e2.png','ee2.png', 50, 300, 50, 50)
         enemy2.speed *= level_speed
-        enemy3 = Enemy('e3.png', 'ee3.png', 100, 200, 50, 50)
+        enemy3 = Enemy('e3.png','ee3.png', 100, 200, 50, 50)
         enemy3.speed *= level_speed
         enemies = [enemy1, enemy2, enemy3]
 
-        treasure = GameObject('t.png', 't.png', 375, 50, 50, 50)
+        treasure = GameObject('t.png','t.png',375, 50, 50, 50)
 
         while running:
             for event in pygame.event.get():
@@ -72,7 +71,7 @@ class Game:
                         direction = 0
 
             self.SCREEN.fill(GRAY)
-            self.SCREEN.blit(self.image, (0, 0))
+            self.SCREEN.blit(self.image,(0,0))
 
             treasure.draw(self.SCREEN)
             player.move(direction, self.height)
@@ -128,12 +127,11 @@ class Game:
         else:
             pass
 
-
 # Parent Class for the Player and Enemies
 class GameObject:
 
     # Sets up animation, position on screen, and scale of object
-    def __init__(self, img, img2, x, y, width, height):
+    def __init__(self, img,img2, x, y, width, height):
         object_image = pygame.image.load(img)
         object_image2 = pygame.image.load((img2))
         self.image = pygame.transform.scale(object_image, (width, height))
@@ -144,19 +142,17 @@ class GameObject:
         self.width = width
         self.height = height
 
-    def draw(self, background):
-        background.blit(self.image, (self.x_pos, self.y_pos))
+    def draw(self,background):
+        background.blit(self.image,(self.x_pos,self.y_pos))
 
     def draw2(self, background):
         background.blit(self.image2, (self.x_pos, self.y_pos))
 
-
 # Sets up movement calculations
 class Player(GameObject):
     speed = 20
-
-    def __init__(self, img, img2, x, y, width, height):
-        super().__init__(img, img2, x, y, width, height)
+    def __init__(self,img,img2, x, y, width, height):
+        super().__init__(img,img2, x, y, width, height)
 
     def move(self, direction, max_height):
         if direction > 0:
@@ -180,22 +176,20 @@ class Player(GameObject):
 
         return True
 
-
 # Makes Enemy bounce back and forth
 class Enemy(GameObject):
     speed = 5
+    def __init__(self, img,img2, x, y, width, height):
+        super().__init__(img,img2, x, y, width, height)
 
-    def __init__(self, img, img2, x, y, width, height):
-        super().__init__(img, img2, x, y, width, height)
-
-    def move(self, max_width):
+    def move(self,max_width):
         if self.x_pos <= 20:
             self.speed = abs(self.speed)
         elif self.x_pos >= max_width - 60:
             self.speed = -abs(self.speed)
         self.x_pos += self.speed
 
-
 # Runs the game
-new_game = Game('b.png', SCREEN_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT)
+new_game = Game('b.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
 new_game.gameloop(1)
+

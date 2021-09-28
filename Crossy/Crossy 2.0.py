@@ -192,3 +192,4 @@ class Enemy(GameObject):
 # Runs the game
 new_game = Game('b.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
 new_game.gameloop(1)
+
