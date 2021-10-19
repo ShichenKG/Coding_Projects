@@ -10,16 +10,51 @@
 
 import pygame, sys
 
+
 # Pygame setup screen + Variables
 pygame.init()
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN_TITLE = '001'
+pygame.mixer.init()
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+SCREEN_TITLE = 'Crossy 2.0'
 GRAY = (84,84,84)
 BLACK = (0,0,0)
 clock = pygame.time.Clock()
 font = pygame.font.SysFont('Comic Sans MS',65)
 Level = 1
+
+# Woo Buttons
+class button():
+    def __init__(self, color, x, y, width, height, text='', font = '',size = 60):
+        self.color = color
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.text = text
+        self.font = font
+        self.size = size
+
+    def draw(self, win, outline=None):
+        # Call this method to draw the button on the screen
+        if outline:
+            pygame.draw.rect(win, outline, (self.x - 2, self.y - 2, self.width + 4, self.height + 4), 0)
+
+        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 0)
+
+        if self.text != '':
+            font = pygame.font.SysFont(self.font,self.size)
+            text = font.render(self.text, 1, (0, 0, 0))
+            win.blit(text, (
+            self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
+
+
+    def isOver(self, pos):
+        if pos[0] > self.x and pos[0] < self.x + self.width:
+            if pos[1] > self.y and pos[1] < self.y + self.height:
+                return True
+
+        return False
 
 # Parent Class that controls the entire game
 class Game:
@@ -39,22 +74,62 @@ class Game:
         background = pygame.image.load(image)
         self.image = pygame.transform.scale(background, (width, height))
 
+    def playagain(self):
+        play = True
+        while play:
+            background = button((86, 91, 94), 430, 50, 440, 500)
+            background.draw(self.SCREEN)
+            title = button((86, 91, 94), 540, 110, 220, 10, 'You Died!','',90)
+            title.draw(self.SCREEN)
+
+            button_1 = button((141, 156, 166), 540, 250, 220, 100, 'Try Again')
+            button_2 = button((141, 156, 166), 540, 400, 220, 100, 'Quit')
+            button_1.draw(self.SCREEN)
+            button_2.draw(self.SCREEN)
+
+            for event in pygame.event.get():
+                pos = pygame.mouse.get_pos()
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.type == pygame.K_RETURN:
+                        global Level
+                        Level = 1
+                        new_game.gameloop(1)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if button_1.isOver(pos):
+                        Level = 1
+                        new_game.gameloop(1)
+                    if background.isOver(pos):
+                        pygame.quit()
+                        sys.exit()
+                if event.type == pygame.MOUSEMOTION:
+                    if button_1.isOver(pos):
+                        button_1.color=(200,0,0)
+                    else:
+                        button_1.color=(0,255,0)
+            pygame.display.update()
+            clock.tick(30)
+
     # Shows stuff on screen, and runs events
     def gameloop(self,level_speed):
         running = True
         win = False
         direction = 0
 
-        player = Player('p.png','p2.png',375,500, 50, 50)
-        enemy1 = Enemy('e.png','ee.png', 20, 400,50,50)
+        player = Player('p.png','p2.png',610,650, 50, 50)
+        enemy1 = Enemy('e.png','ee.png', 20, 560,50,50)
         enemy1.speed *= level_speed
-        enemy2 = Enemy('e2.png','ee2.png', 50, 300, 50, 50)
+        enemy2 = Enemy('e2.png','ee2.png', 200, 450, 50, 50)
         enemy2.speed *= level_speed
-        enemy3 = Enemy('e3.png','ee3.png', 100, 200, 50, 50)
+        enemy3 = Enemy('e3.png','ee3.png', 400, 330, 50, 50)
         enemy3.speed *= level_speed
-        enemies = [enemy1, enemy2, enemy3]
+        enemy4 = Enemy('e4.png','ee4.png', 800, 200, 50, 50)
+        enemy4.speed *= level_speed
+        enemies = [enemy1, enemy2, enemy3,enemy4]
 
-        treasure = GameObject('t.png','t.png',375, 50, 50, 50)
+        treasure = GameObject('k.png','t.png',610, 50, 50, 50)
 
         while running:
             for event in pygame.event.get():
@@ -65,6 +140,10 @@ class Game:
                     if event.key == pygame.K_UP:
                         direction = 1
                     elif event.key == pygame.K_DOWN:
+                        direction = -1
+                    elif event.key == pygame.K_w:
+                        direction = 1
+                    elif event.key == pygame.K_s:
                         direction = -1
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
@@ -87,6 +166,9 @@ class Game:
             if level_speed > 4:
                 enemy3.move(self.width)
                 enemy3.draw(self.SCREEN)
+            if level_speed > 6:
+                enemy4.move(self.width)
+                enemy4.draw(self.SCREEN)
 
             # Collision for every enemy, changes animation, and shows Score
             for enemy in enemies:
@@ -98,15 +180,23 @@ class Game:
                     enemy1.draw2(self.SCREEN)
                     if level_speed > 2:
                         enemy2.draw2(self.SCREEN)
-
                     if level_speed > 4:
                         enemy3.draw2(self.SCREEN)
+                    if level_speed > 6:
+                        enemy4.draw2(self.SCREEN)
+
+
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load('rick.mp3')
+                    pygame.mixer.music.play(-1)
+                    Game.playagain(self)
                     text = font.render('You Lose', True, BLACK)
-                    self.SCREEN.blit(text, (270, 150))
+                    self.SCREEN.blit(text, (510, 150))
                     text2 = font.render('You made it to level: ' + str(Level), True, BLACK)
-                    self.SCREEN.blit(text2, (100, 300))
+                    self.SCREEN.blit(text2, (320, 300))
                     pygame.display.update()
                     clock.tick(0.3)
+
 
             if player.detection(treasure):
                 Level += 1
@@ -114,10 +204,10 @@ class Game:
                 running = False
                 win = True
                 text = font.render('Level ' + str(Level), True, BLACK)
-                self.SCREEN.blit(text, (285, 150))
+                self.SCREEN.blit(text, (530, 150))
                 player.draw(self.SCREEN)
                 pygame.display.update()
-                clock.tick(0.5)
+                clock.tick(0.4)
             pygame.display.update()
             clock.tick(self.TICK)
 
@@ -188,6 +278,8 @@ class Enemy(GameObject):
         elif self.x_pos >= max_width - 60:
             self.speed = -abs(self.speed)
         self.x_pos += self.speed
+
+
 
 # Runs the game
 new_game = Game('b.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
