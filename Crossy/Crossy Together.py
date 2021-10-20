@@ -149,7 +149,7 @@ class Game2:
         direction = 0
         direction2 = 0
 
-        player = Player('p.png','pp.png',280,650, 50, 50)
+        player = Player('v.png','pp.png',280,650, 50, 50)
         player2 = Player('p2.png','pp2.png',875,650, 50, 50)
         enemy1 = Enemy('e.png','ee.png', 20, 560,50,50)
         enemy1.speed *= level_speed
@@ -343,7 +343,7 @@ class Game:
         win = False
         direction = 0
 
-        player = Player('p.png','pp.png',610,650, 50, 50)
+        player = Player('v.png','pp.png',610,650, 50, 50)
         enemy1 = Enemy('e.png','ee.png', 20, 560,50,50)
         enemy1.speed *= level_speed
         enemy2 = Enemy('e2.png','ee2.png', 200, 450, 50, 50)
@@ -354,7 +354,7 @@ class Game:
         enemy4.speed *= level_speed
         enemies = [enemy1, enemy2, enemy3,enemy4]
 
-        treasure = GameObject('k.png','t.png',610, 50, 50, 50)
+        treasure = GameObject('t.png','t.png',610, 50, 50, 50)
 
         while running:
             for event in pygame.event.get():
@@ -517,7 +517,7 @@ class Enemy(GameObject):
         self.x_pos += self.speed
 
 
-new_game = Game('b.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
-new_game2 = Game2('b2.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
+new_game = Game('minea.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
+new_game2 = Game2('mineb.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
 
 main_menu()
