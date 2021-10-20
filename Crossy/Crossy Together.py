@@ -14,6 +14,19 @@ BLACK = (0,0,0)
 clock = pygame.time.Clock()
 font = pygame.font.SysFont('Comic Sans MS',65)
 Level = 1
+clicked = False
+counter = 0
+
+# Image Variables
+imgs = { 'p1' : {1:'players/p.png', 2:'players/V.png'},'p1b':{1:'players/pp.png', 2:'players/V2.png'},
+         'en1': {1:'enemies/e.png'},'en1b': {1:'enemies/ee.png'},
+         'en2': {1:'enemies/e2.png'},'en2b': {1:'enemies/ee2.png'},
+         'en3': {1:'enemies/e3.png'},'en3b': {1:'enemies/ee3.png'},
+         'en4': {1:'enemies/e4.png'},'en4b': {1:'enemies/ee4.png'},
+         'tre': {1:'t.png'},'tre2': {1:'k.png'},
+         'bckgrnd1' : {1:'backgrounds/b.png', 2:'backgrounds/minea.png'},
+         'bckgrnd2' : {1:'backgrounds/b2.png', 2:'backgrounds/mineb.png'}
+         }
 
 class button():
     def __init__(self, color, x, y, width, height, text='', font = '',size = 60):
@@ -70,8 +83,53 @@ def main_menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_1.isOver(pos):
+                    global Level
+                    Level = 1
                     new_game.gameloop(1)
                 if button_2.isOver(pos):
+                    Level = 1
+                    new_game2.gameloop(1)
+                    main_menu()
+                if button_3.isOver(pos):
+                    pygame.quit()
+                    sys.exit()
+            if event.type == pygame.MOUSEMOTION:
+                if button_1.isOver(pos):
+                    button_1.color=(200,0,0)
+                else:
+                    button_1.color=(0,255,0)
+
+        pygame.display.update()
+        clock.tick(30)
+
+def Shop():
+    main = True
+    while main:
+
+        SCREEN.fill((70, 171, 97))
+        title = button((70, 171, 97), 540, 50, 220, 100, 'This is a Menu?',size=100)
+        title.draw(SCREEN)
+
+        button_1 = button((0,255,0), 520, 200, 260, 100, 'Player 1',('Comic Sans MS',60))
+        button_2 = button((0,255,0), 520, 350, 260, 100, 'Player 2',('Comic Sans MS',60))
+        button_3 = button((0,255,0), 540, 500, 220, 100, 'Backgrounds',('Comic Sans MS',60))
+        button_1.draw(SCREEN)
+        button_2.draw(SCREEN)
+        button_3.draw(SCREEN)
+
+
+        for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button_1.isOver(pos):
+                    global Level
+                    Level = 1
+                    new_game.gameloop(1)
+                if button_2.isOver(pos):
+                    Level = 1
                     new_game2.gameloop(1)
                     main_menu()
                 if button_3.isOver(pos):
@@ -149,20 +207,21 @@ class Game2:
         direction = 0
         direction2 = 0
 
-        player = Player('v.png','pp.png',280,650, 50, 50)
-        player2 = Player('p2.png','pp2.png',875,650, 50, 50)
-        enemy1 = Enemy('e.png','ee.png', 20, 560,50,50)
+
+        player = Player(imgs['p1'][2],imgs['p1b'][2],280,650, 50, 50)
+        player2 = Player(imgs['p1'][1],imgs['p1b'][1],875,650, 50, 50)
+        enemy1 = Enemy(imgs['en1'][1],imgs['en1b'][1], 20, 560,50,50)
         enemy1.speed *= level_speed
-        enemy2 = Enemy('e2.png','ee2.png', 200, 450, 50, 50)
+        enemy2 = Enemy(imgs['en2'][1],imgs['en2b'][1], 200, 450, 50, 50)
         enemy2.speed *= level_speed
-        enemy3 = Enemy('e3.png','ee3.png', 400, 330, 50, 50)
+        enemy3 = Enemy(imgs['en3'][1],imgs['en3b'][1], 400, 330, 50, 50)
         enemy3.speed *= level_speed
-        enemy4 = Enemy('e4.png','ee4.png', 800, 200, 50, 50)
+        enemy4 = Enemy(imgs['en4'][1],imgs['en4b'][1], 800, 200, 50, 50)
         enemy4.speed *= level_speed
         enemies = [enemy1, enemy2, enemy3,enemy4]
 
-        treasure = GameObject('t.png','t.png',280, 50, 50, 50)
-        treasure2 = GameObject('t.png','t.png',875, 50, 50, 50)
+        treasure = GameObject(imgs['tre'][1],imgs['tre'][1],280, 50, 50, 50)
+        treasure2 = GameObject(imgs['tre'][1],imgs['tre'][1],875, 50, 50, 50)
 
         while running:
             for event in pygame.event.get():
@@ -343,18 +402,18 @@ class Game:
         win = False
         direction = 0
 
-        player = Player('v.png','pp.png',610,650, 50, 50)
-        enemy1 = Enemy('e.png','ee.png', 20, 560,50,50)
+        player = Player('players/V.png','players/V2.png',610,650, 50, 50)
+        enemy1 = Enemy('enemies/e.png','enemies/ee.png', 20, 560,50,50)
         enemy1.speed *= level_speed
-        enemy2 = Enemy('e2.png','ee2.png', 200, 450, 50, 50)
+        enemy2 = Enemy('enemies/e2.png','enemies/ee2.png', 200, 450, 50, 50)
         enemy2.speed *= level_speed
-        enemy3 = Enemy('e3.png','ee3.png', 400, 330, 50, 50)
+        enemy3 = Enemy('enemies/e3.png','enemies/ee3.png', 400, 330, 50, 50)
         enemy3.speed *= level_speed
-        enemy4 = Enemy('e4.png','ee4.png', 800, 200, 50, 50)
+        enemy4 = Enemy('enemies/e4.png','enemies/ee4.png', 800, 200, 50, 50)
         enemy4.speed *= level_speed
         enemies = [enemy1, enemy2, enemy3,enemy4]
 
-        treasure = GameObject('t.png','t.png',610, 50, 50, 50)
+        treasure = GameObject('k.png','t.png',610, 50, 50, 50)
 
         while running:
             for event in pygame.event.get():
@@ -517,7 +576,7 @@ class Enemy(GameObject):
         self.x_pos += self.speed
 
 
-new_game = Game('minea.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
-new_game2 = Game2('mineb.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
+new_game = Game(imgs['bckgrnd1'][2],SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
+new_game2 = Game2(imgs['bckgrnd2'][2],SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
 
 main_menu()

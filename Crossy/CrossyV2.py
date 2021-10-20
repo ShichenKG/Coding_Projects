@@ -10,7 +10,6 @@
 
 import pygame, sys
 
-
 # Pygame setup screen + Variables
 pygame.init()
 pygame.mixer.init()
@@ -118,14 +117,14 @@ class Game:
         win = False
         direction = 0
 
-        player = Player('p.png','p2.png',610,650, 50, 50)
-        enemy1 = Enemy('e.png','ee.png', 20, 560,50,50)
+        player = Player('players/p.png','players/p2.png',610,650, 50, 50)
+        enemy1 = Enemy('enemies/e.png','enemies/ee.png', 20, 560,50,50)
         enemy1.speed *= level_speed
-        enemy2 = Enemy('e2.png','ee2.png', 200, 450, 50, 50)
+        enemy2 = Enemy('enemies/e2.png','enemies/ee2.png', 200, 450, 50, 50)
         enemy2.speed *= level_speed
-        enemy3 = Enemy('e3.png','ee3.png', 400, 330, 50, 50)
+        enemy3 = Enemy('enemies/e3.png','enemies/ee3.png', 400, 330, 50, 50)
         enemy3.speed *= level_speed
-        enemy4 = Enemy('e4.png','ee4.png', 800, 200, 50, 50)
+        enemy4 = Enemy('enemies/e4.png','enemies/ee4.png', 800, 200, 50, 50)
         enemy4.speed *= level_speed
         enemies = [enemy1, enemy2, enemy3,enemy4]
 
@@ -147,6 +146,8 @@ class Game:
                         direction = -1
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                        direction = 0
+                    if event.key == pygame.K_w or event.key == pygame.K_s:
                         direction = 0
 
             self.SCREEN.fill(GRAY)
@@ -282,6 +283,6 @@ class Enemy(GameObject):
 
 
 # Runs the game
-new_game = Game('b.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
+new_game = Game('backgrounds/b.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
 new_game.gameloop(1)
 

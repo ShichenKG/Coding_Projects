@@ -99,9 +99,8 @@ class Game2:
                         Level = 1
                         new_game2.gameloop(1)
                     if background.isOver(pos):
-                        global running
-                        running = False
-                        play = False
+                        pygame.quit()
+                        sys.exit()
                 if event.type == pygame.MOUSEMOTION:
                     if button_1.isOver(pos):
                         button_1.color=(200,0,0)
@@ -114,18 +113,19 @@ class Game2:
     def gameloop(self,level_speed):
         running = True
         win = False
+        global Level
         direction = 0
         direction2 = 0
 
-        player = Player('p.png','pp.png',280,650, 50, 50)
-        player2 = Player('p2.png','pp2.png',875,650, 50, 50)
-        enemy1 = Enemy('e.png','ee.png', 20, 560,50,50)
+        player = Player('players/p.png','players/pp.png',280,650, 50, 50)
+        player2 = Player('players/p2.png','players/pp2.png',875,650, 50, 50)
+        enemy1 = Enemy('enemies/e.png','enemies/ee.png', 20, 560,50,50)
         enemy1.speed *= level_speed
-        enemy2 = Enemy('e2.png','ee2.png', 200, 450, 50, 50)
+        enemy2 = Enemy('enemies/e2.png','enemies/ee2.png', 200, 450, 50, 50)
         enemy2.speed *= level_speed
-        enemy3 = Enemy('e3.png','ee3.png', 400, 330, 50, 50)
+        enemy3 = Enemy('enemies/e3.png','enemies/ee3.png', 400, 330, 50, 50)
         enemy3.speed *= level_speed
-        enemy4 = Enemy('e4.png','ee4.png', 800, 200, 50, 50)
+        enemy4 = Enemy('enemies/e4.png','enemies/ee4.png', 800, 200, 50, 50)
         enemy4.speed *= level_speed
         enemies = [enemy1, enemy2, enemy3,enemy4]
 
@@ -147,9 +147,8 @@ class Game2:
                     elif event.key == pygame.K_s:
                         direction = -1
                     elif event.key == pygame.K_ESCAPE:
-                        global play
-                        running = False
-                        play = False
+                        sys.exit()
+                        pygame.quit()
 
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
@@ -184,9 +183,6 @@ class Game2:
             # Collision for every enemy, changes animation, and shows Score
             for enemy in enemies:
                 if player.detection(enemy):
-                    global Level
-                    running = False
-                    win = False
                     player.draw2(self.SCREEN)
                     enemy1.draw2(self.SCREEN)
                     if level_speed > 2:
@@ -206,8 +202,6 @@ class Game2:
                     clock.tick(0.3)
 
                 if player2.detection(enemy):
-                    running = False
-                    win = False
                     player2.draw2(self.SCREEN)
                     enemy1.draw2(self.SCREEN)
                     if level_speed > 2:
@@ -235,7 +229,7 @@ class Game2:
                 self.SCREEN.blit(text, (530, 150))
                 player.draw(self.SCREEN)
                 pygame.display.update()
-                clock.tick(0.4)
+                clock.tick(3)
             pygame.display.update()
             clock.tick(self.TICK)
 
@@ -312,7 +306,7 @@ class Enemy(GameObject):
 
 
 # Runs the game
-new_game2 = Game2('b2.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
+new_game2 = Game2('backgrounds/b2.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
 new_game2.gameloop(1)
 
 
