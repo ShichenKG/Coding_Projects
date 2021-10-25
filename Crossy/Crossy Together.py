@@ -41,7 +41,7 @@ enemy3img2 = imgs['en3b'][1]
 enemy4img = imgs['en4'][1]
 enemy4img2 = imgs['en4b'][1]
 treasureimg = imgs['tre'][1]
-background = imgs['bckgrnd1'][1]
+background1 = imgs['bckgrnd1'][1]
 background2 = imgs['bckgrnd2'][1]
 
 
@@ -130,7 +130,7 @@ def Themes():
     global playerimg, playerimg2, player2img, player2img2, \
         enemyimg, enemyimg2, enemy2img, enemy2img2, \
         enemy3img, enemy3img2, enemy4img, enemy4img2, \
-        treasureimg, background, background2
+        treasureimg, background1, background2
     while main:
 
         SCREEN.fill((47, 22, 66))
@@ -167,7 +167,7 @@ def Themes():
                     enemy4img = imgs['en4'][1]
                     enemy4img2 = imgs['en4b'][1]
                     treasureimg = imgs['tre'][1]
-                    background = imgs['bckgrnd1'][1]
+                    background1 = imgs['bckgrnd1'][1]
                     background2 = imgs['bckgrnd2'][1]
                 if button_2.isOver(pos):
                     playerimg = imgs['p1'][2]
@@ -183,7 +183,7 @@ def Themes():
                     enemy4img = imgs['en4'][1]
                     enemy4img2 = imgs['en4b'][1]
                     treasureimg = imgs['tre'][1]
-                    background = imgs['bckgrnd1'][2]
+                    background1 = imgs['bckgrnd1'][2]
                     background2 = imgs['bckgrnd2'][2]
                 if button_3.isOver(pos):
                     pass
@@ -203,8 +203,7 @@ class Game2:
     TICK = 60
     running = True
 
-    def __init__(self, image, title, width, height):
-        self.image = image
+    def __init__(self, title, width, height):
         self.title = title
         self.width = width
         self.height = height
@@ -213,14 +212,12 @@ class Game2:
         self.SCREEN.fill(GRAY)
         pygame.display.set_caption(SCREEN_TITLE)
 
-        background = pygame.image.load(image)
-        self.image = pygame.transform.scale(background, (width, height))
 
     def playagain(self):
         play = True
         while play:
-            background = button((86, 91, 94), 400, 320, 440, 350)
-            background.draw(self.SCREEN)
+            backdrop = button((86, 91, 94), 400, 320, 440, 350)
+            backdrop.draw(self.SCREEN)
 
             button_1 = button((141, 156, 166), 510, 370, 220, 100, 'Try Again')
             button_2 = button((141, 156, 166), 510, 520, 220, 100, 'Quit')
@@ -241,7 +238,7 @@ class Game2:
                     if button_1.isOver(pos):
                         Level = 1
                         new_game2.gameloop(1)
-                    if background.isOver(pos):
+                    if backdrop.isOver(pos):
                         global running
                         running = False
                         play = False
@@ -306,7 +303,9 @@ class Game2:
                         direction = 0
 
             self.SCREEN.fill(GRAY)
-            self.SCREEN.blit(self.image,(0,0))
+            back = pygame.image.load(background2)
+            back2 = pygame.transform.scale(back,(self.width,self.height))
+            self.SCREEN.blit(back2,(0, 0))
 
             treasure.draw(self.SCREEN)
             treasure2.draw(self.SCREEN)
@@ -399,8 +398,7 @@ class Game:
     TICK = 60
     running = True
 
-    def __init__(self, image, title, width, height):
-        self.image = image
+    def __init__(self, title, width, height):
         self.title = title
         self.width = width
         self.height = height
@@ -409,14 +407,12 @@ class Game:
         self.SCREEN.fill(GRAY)
         pygame.display.set_caption(SCREEN_TITLE)
 
-        background = pygame.image.load(image)
-        self.image = pygame.transform.scale(background, (width, height))
 
     def playagain(self):
         play = True
         while play:
-            background = button((86, 91, 94), 430, 50, 440, 500)
-            background.draw(self.SCREEN)
+            backdrop = button((86, 91, 94), 430, 50, 440, 500)
+            backdrop.draw(self.SCREEN)
             title = button((86, 91, 94), 540, 110, 220, 10, 'You Died!','',90)
             title.draw(self.SCREEN)
 
@@ -439,7 +435,7 @@ class Game:
                     if button_1.isOver(pos):
                         Level = 1
                         new_game.gameloop(1)
-                    if background.isOver(pos):
+                    if backdrop.isOver(pos):
                         global running
                         running = False
                         play = False
@@ -497,8 +493,9 @@ class Game:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
                         direction = 0
 
-            self.SCREEN.fill(GRAY)
-            self.SCREEN.blit(self.image,(0,0))
+            back = pygame.image.load(background1)
+            back2 = pygame.transform.scale(back, (self.width, self.height))
+            self.SCREEN.blit(back2, (0, 0))
 
             treasure.draw(self.SCREEN)
             player.move(direction, self.height)
@@ -632,6 +629,6 @@ class Enemy(GameObject):
         self.x_pos += self.speed
 
 
-new_game = Game(background, SCREEN_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT)
-new_game2 = Game2(background2, SCREEN_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT)
+new_game = Game(SCREEN_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT)
+new_game2 = Game2(SCREEN_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT)
 main_menu()
