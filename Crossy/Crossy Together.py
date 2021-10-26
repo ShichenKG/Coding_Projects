@@ -19,12 +19,12 @@ counter = 0
 
 # Image Variables
 imgs = { 'p1' : {1:'players/p.png', 2:'players/V.png'},'p1b':{1:'players/pp.png', 2:'players/V2.png'},
-         'p2' : {1:'players/p2.png', 2:'players/V.png'},'p2b' : {1:'players/pp2.png', 2:'players.V2.png'},
-         'en1': {1:'enemies/e.png'},'en1b': {1:'enemies/ee.png'},
-         'en2': {1:'enemies/e2.png'},'en2b': {1:'enemies/ee2.png'},
-         'en3': {1:'enemies/e3.png'},'en3b': {1:'enemies/ee3.png'},
-         'en4': {1:'enemies/e4.png'},'en4b': {1:'enemies/ee4.png'},
-         'tre': {1:'t.png'},'tre2': {1:'k.png'},
+         'p2' : {1:'players/p2.png', 2:'players/i.png'},'p2b' : {1:'players/pp2.png', 2:'players/i2.png'},
+         'en1': {1:'enemies/e.png',2:'enemies/z.png'},'en1b': {1:'enemies/ee.png',2:'enemies/z2.png'},
+         'en2': {1:'enemies/e2.png',2:'enemies/s.png'},'en2b': {1:'enemies/ee2.png',2:'enemies/s2.png'},
+         'en3': {1:'enemies/e3.png',2:'enemies/sp.png'},'en3b': {1:'enemies/ee3.png',2:'enemies/sp2.png'},
+         'en4': {1:'enemies/e4.png',2:'enemies/c.png'},'en4b': {1:'enemies/ee4.png',2:'enemies/c2.png'},
+         'tre': {1:'t.png',2:'k.png'},'tre2': {1:'t.png',2:'t2.png'},
          'bckgrnd1' : {1:'backgrounds/b.png', 2:'backgrounds/minea.png'},
          'bckgrnd2' : {1:'backgrounds/b2.png', 2:'backgrounds/mineb.png'}
          }
@@ -41,6 +41,7 @@ enemy3img2 = imgs['en3b'][1]
 enemy4img = imgs['en4'][1]
 enemy4img2 = imgs['en4b'][1]
 treasureimg = imgs['tre'][1]
+treasureimg2 = imgs['tre2'][1]
 background1 = imgs['bckgrnd1'][1]
 background2 = imgs['bckgrnd2'][1]
 
@@ -126,12 +127,12 @@ def main_menu():
         clock.tick(30)
 
 def Themes():
-    main = True
+    theme = True
     global playerimg, playerimg2, player2img, player2img2, \
         enemyimg, enemyimg2, enemy2img, enemy2img2, \
         enemy3img, enemy3img2, enemy4img, enemy4img2, \
-        treasureimg, background1, background2
-    while main:
+        treasureimg, background1, background2, treasureimg2
+    while theme:
 
         SCREEN.fill((47, 22, 66))
         title = button((47, 22, 66), 530, 50, 220, 100, 'Themes',size=120)
@@ -139,7 +140,7 @@ def Themes():
 
         button_1 = button((29, 92, 33), 100, 200, 260, 100, 'Classic',('Comic Sans MS',60))
         button_2 = button((29, 92, 33), 490, 200, 300, 100, 'Minecraft',('Comic Sans MS',60))
-        button_3 = button((29, 92, 33), 900, 200, 300, 100, '',('Comic Sans MS',60))
+        button_3 = button((29, 92, 33), 900, 200, 300, 100, '???',('Comic Sans MS',60))
         button_4 = button((29, 92, 33), 1000, 550, 220, 100, 'Back', ('Comic Sans MS', 60))
         button_1.draw(SCREEN)
         button_2.draw(SCREEN)
@@ -152,6 +153,10 @@ def Themes():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.type == pygame.K_ESCAPE:
+                    theme = False
+                    main_menu()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_1.isOver(pos):
                     playerimg = imgs['p1'][1]
@@ -167,22 +172,24 @@ def Themes():
                     enemy4img = imgs['en4'][1]
                     enemy4img2 = imgs['en4b'][1]
                     treasureimg = imgs['tre'][1]
+                    treasureimg2 = imgs['tre2'][1]
                     background1 = imgs['bckgrnd1'][1]
                     background2 = imgs['bckgrnd2'][1]
                 if button_2.isOver(pos):
                     playerimg = imgs['p1'][2]
                     playerimg2 = imgs['p1b'][2]
-                    player2img = imgs['p2'][1]
-                    player2img2 = imgs['p2b'][1]
-                    enemyimg = imgs['en1'][1]
-                    enemyimg2 = imgs['en1b'][1]
-                    enemy2img = imgs['en2'][1]
-                    enemy2img2 = imgs['en2b'][1]
-                    enemy3img = imgs['en3'][1]
-                    enemy3img2 = imgs['en3b'][1]
-                    enemy4img = imgs['en4'][1]
-                    enemy4img2 = imgs['en4b'][1]
-                    treasureimg = imgs['tre'][1]
+                    player2img = imgs['p2'][2]
+                    player2img2 = imgs['p2b'][2]
+                    enemyimg = imgs['en1'][2]
+                    enemyimg2 = imgs['en1b'][2]
+                    enemy2img = imgs['en2'][2]
+                    enemy2img2 = imgs['en2b'][2]
+                    enemy3img = imgs['en3'][2]
+                    enemy3img2 = imgs['en3b'][2]
+                    enemy4img = imgs['en4'][2]
+                    enemy4img2 = imgs['en4b'][2]
+                    treasureimg = imgs['tre'][2]
+                    treasureimg2 = imgs['tre2'][2]
                     background1 = imgs['bckgrnd1'][2]
                     background2 = imgs['bckgrnd2'][2]
                 if button_3.isOver(pos):
@@ -255,7 +262,7 @@ class Game2:
     def gameloop(self,level_speed):
         global playerimg, playerimg2, player2img, player2img2, \
             enemyimg, enemyimg2, enemy2img, enemy2img2, \
-            enemy3img, enemy3img2, enemy4img, enemy4img2, treasureimg
+            enemy3img, enemy3img2, enemy4img, enemy4img2, treasureimg, treasureimg2
         running = True
         win = False
         direction = 0
@@ -273,8 +280,11 @@ class Game2:
         enemy4.speed *= level_speed
         enemies = [enemy1, enemy2, enemy3,enemy4]
 
-        treasure = GameObject(treasureimg, treasureimg, 280, 50, 50, 50)
-        treasure2 = GameObject(treasureimg, treasureimg, 875, 50, 50, 50)
+        back = pygame.image.load(background2)
+        back2 = pygame.transform.scale(back,(self.width,self.height))
+
+        treasure = GameObject(treasureimg2, treasureimg, 280, 50, 50, 50)
+        treasure2 = GameObject(treasureimg2, treasureimg, 875, 50, 50, 50)
 
         while running:
             for event in pygame.event.get():
@@ -303,8 +313,6 @@ class Game2:
                         direction = 0
 
             self.SCREEN.fill(GRAY)
-            back = pygame.image.load(background2)
-            back2 = pygame.transform.scale(back,(self.width,self.height))
             self.SCREEN.blit(back2,(0, 0))
 
             treasure.draw(self.SCREEN)
@@ -334,6 +342,9 @@ class Game2:
                     global Level
                     running = False
                     win = False
+                    self.SCREEN.blit(back2,(0, 0))
+                    treasure.draw(self.SCREEN)
+                    treasure2.draw(self.SCREEN)
                     player.draw2(self.SCREEN)
                     enemy1.draw2(self.SCREEN)
                     if level_speed > 2:
@@ -355,6 +366,9 @@ class Game2:
                 if player2.detection(enemy):
                     running = False
                     win = False
+                    self.SCREEN.blit(back2,(0, 0))
+                    treasure.draw(self.SCREEN)
+                    treasure2.draw(self.SCREEN)
                     player2.draw2(self.SCREEN)
                     enemy1.draw2(self.SCREEN)
                     if level_speed > 2:
@@ -454,18 +468,21 @@ class Game:
         win = False
         direction = 0
 
-        player = Player('players/V.png','players/V2.png',610,650, 50, 50)
-        enemy1 = Enemy('enemies/e.png','enemies/ee.png', 20, 560,50,50)
+        player = Player(playerimg,playerimg2,610,650, 50, 50)
+        enemy1 = Enemy(enemyimg,enemyimg2, 20, 560,50,50)
         enemy1.speed *= level_speed
-        enemy2 = Enemy('enemies/e2.png','enemies/ee2.png', 200, 450, 50, 50)
+        enemy2 = Enemy(enemy2img,enemy2img2, 200, 450, 50, 50)
         enemy2.speed *= level_speed
-        enemy3 = Enemy('enemies/e3.png','enemies/ee3.png', 400, 330, 50, 50)
+        enemy3 = Enemy(enemy3img,enemy3img2, 400, 330, 50, 50)
         enemy3.speed *= level_speed
-        enemy4 = Enemy('enemies/e4.png','enemies/ee4.png', 800, 200, 50, 50)
+        enemy4 = Enemy(enemy4img,enemy4img2, 800, 200, 50, 50)
         enemy4.speed *= level_speed
         enemies = [enemy1, enemy2, enemy3,enemy4]
 
-        treasure = GameObject('k.png','t.png',610, 50, 50, 50)
+        back = pygame.image.load(background1)
+        back2 = pygame.transform.scale(back, (self.width, self.height))
+
+        treasure = GameObject(treasureimg,treasureimg,610, 50, 50, 50)
 
         while running:
             for event in pygame.event.get():
@@ -493,8 +510,6 @@ class Game:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
                         direction = 0
 
-            back = pygame.image.load(background1)
-            back2 = pygame.transform.scale(back, (self.width, self.height))
             self.SCREEN.blit(back2, (0, 0))
 
             treasure.draw(self.SCREEN)

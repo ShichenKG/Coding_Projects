@@ -44,12 +44,12 @@ class Game:
         win = False
         direction = 0
 
-        player = Player('p.png','p2.png',375,500, 50, 50)
-        enemy1 = Enemy('e.png','ee.png', 20, 400,50,50)
+        player = Player('players/p.png','players/p2.png',375,500, 50, 50)
+        enemy1 = Enemy('enemies/e.png','enemies/ee.png', 20, 400,50,50)
         enemy1.speed *= level_speed
-        enemy2 = Enemy('e2.png','ee2.png', 50, 300, 50, 50)
+        enemy2 = Enemy('enemies/e2.png','enemies/ee2.png', 50, 300, 50, 50)
         enemy2.speed *= level_speed
-        enemy3 = Enemy('e3.png','ee3.png', 100, 200, 50, 50)
+        enemy3 = Enemy('enemies/e3.png','enemies/ee3.png', 100, 200, 50, 50)
         enemy3.speed *= level_speed
         enemies = [enemy1, enemy2, enemy3]
 
@@ -189,6 +189,6 @@ class Enemy(GameObject):
         self.x_pos += self.speed
 
 # Runs the game
-new_game = Game('b.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
+new_game = Game('backgrounds/b.png',SCREEN_TITLE,SCREEN_WIDTH,SCREEN_HEIGHT)
 new_game.gameloop(1)
 
